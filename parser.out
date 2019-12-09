@@ -17,8 +17,8 @@ Rule 5     run_command -> close_client_connection_in_server
 Rule 6     run_command -> create_client
 Rule 7     run_command -> send_message
 Rule 8     run_command -> send_spec_message
-Rule 9     create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
-Rule 10    create_server -> create_server_for_all
+Rule 9     run_command -> create_server_for_all
+Rule 10    create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
 Rule 11    create_server_for_all -> INITIATE SERVER COLON PORT INT COMMA NAME STRING
 Rule 12    create_client -> CONNECT TO SERVER COLON ADDRESS IP COMMA PORT INT
 Rule 13    allow_conns -> ALLOW CONNECTION IN STRING COLON INT
@@ -30,29 +30,29 @@ Rule 18    send_spec_message -> SEND MESSAGE TO STRING COLON STRING
 
 Terminals, with rules where they appear
 
-ADDRESS              : 9 12
+ADDRESS              : 10 12
 ALLOW                : 13
 ASSIGN               : 
 CLIENTS              : 14
 CLOSE                : 15 16
-COLON                : 9 11 12 13 15 16 17 18
-COMMA                : 9 9 11 12
+COLON                : 10 11 12 13 15 16 17 18
+COMMA                : 10 10 11 12
 CONNECT              : 12
 CONNECTION           : 13 15 16
 FLOAT                : 
 IN                   : 13 14 16
 INFO                 : 14
-INITIATE             : 9 11
-INT                  : 9 11 12 13
-IP                   : 9 12
+INITIATE             : 10 11
+INT                  : 10 11 12 13
+IP                   : 10 12
 KEYWORD              : 
 MESSAGE              : 17 18
-NAME                 : 9 11
-PORT                 : 9 11 12
+NAME                 : 10 11
+PORT                 : 10 11 12
 SEND                 : 17 18
-SERVER               : 9 11 12
+SERVER               : 10 11 12
 SHOW                 : 14
-STRING               : 9 11 13 14 15 16 16 17 18 18
+STRING               : 10 11 13 14 15 16 16 17 18 18
 TO                   : 12 18
 error                : 
 
@@ -63,7 +63,7 @@ close_client_connection_in_server : 5
 close_connection     : 3
 create_client        : 6
 create_server        : 1
-create_server_for_all : 10
+create_server_for_all : 9
 run_command          : 0
 send_message         : 7
 send_spec_message    : 8
@@ -82,8 +82,8 @@ state 0
     (6) run_command -> . create_client
     (7) run_command -> . send_message
     (8) run_command -> . send_spec_message
-    (9) create_server -> . INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
-    (10) create_server -> . create_server_for_all
+    (9) run_command -> . create_server_for_all
+    (10) create_server -> . INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
     (13) allow_conns -> . ALLOW CONNECTION IN STRING COLON INT
     (15) close_connection -> . CLOSE CONNECTION COLON STRING
     (14) show_clients -> . SHOW CLIENTS INFO IN STRING
@@ -93,7 +93,7 @@ state 0
     (18) send_spec_message -> . SEND MESSAGE TO STRING COLON STRING
     (11) create_server_for_all -> . INITIATE SERVER COLON PORT INT COMMA NAME STRING
 
-    INITIATE        shift and go to state 10
+    INITIATE        shift and go to state 11
     ALLOW           shift and go to state 12
     CLOSE           shift and go to state 13
     SHOW            shift and go to state 14
@@ -109,7 +109,7 @@ state 0
     create_client                  shift and go to state 7
     send_message                   shift and go to state 8
     send_spec_message              shift and go to state 9
-    create_server_for_all          shift and go to state 11
+    create_server_for_all          shift and go to state 10
 
 state 1
 
@@ -175,17 +175,17 @@ state 9
 
 state 10
 
-    (9) create_server -> INITIATE . SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
-    (11) create_server_for_all -> INITIATE . SERVER COLON PORT INT COMMA NAME STRING
+    (9) run_command -> create_server_for_all .
 
-    SERVER          shift and go to state 17
+    $end            reduce using rule 9 (run_command -> create_server_for_all .)
 
 
 state 11
 
-    (10) create_server -> create_server_for_all .
+    (10) create_server -> INITIATE . SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
+    (11) create_server_for_all -> INITIATE . SERVER COLON PORT INT COMMA NAME STRING
 
-    $end            reduce using rule 10 (create_server -> create_server_for_all .)
+    SERVER          shift and go to state 17
 
 
 state 12
@@ -227,7 +227,7 @@ state 16
 
 state 17
 
-    (9) create_server -> INITIATE SERVER . COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
+    (10) create_server -> INITIATE SERVER . COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
     (11) create_server_for_all -> INITIATE SERVER . COLON PORT INT COMMA NAME STRING
 
     COLON           shift and go to state 23
@@ -273,7 +273,7 @@ state 22
 
 state 23
 
-    (9) create_server -> INITIATE SERVER COLON . ADDRESS IP COMMA PORT INT COMMA NAME STRING
+    (10) create_server -> INITIATE SERVER COLON . ADDRESS IP COMMA PORT INT COMMA NAME STRING
     (11) create_server_for_all -> INITIATE SERVER COLON . PORT INT COMMA NAME STRING
 
     ADDRESS         shift and go to state 30
@@ -325,7 +325,7 @@ state 29
 
 state 30
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS . IP COMMA PORT INT COMMA NAME STRING
+    (10) create_server -> INITIATE SERVER COLON ADDRESS . IP COMMA PORT INT COMMA NAME STRING
 
     IP              shift and go to state 38
 
@@ -383,7 +383,7 @@ state 37
 
 state 38
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS IP . COMMA PORT INT COMMA NAME STRING
+    (10) create_server -> INITIATE SERVER COLON ADDRESS IP . COMMA PORT INT COMMA NAME STRING
 
     COMMA           shift and go to state 45
 
@@ -432,7 +432,7 @@ state 44
 
 state 45
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA . PORT INT COMMA NAME STRING
+    (10) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA . PORT INT COMMA NAME STRING
 
     PORT            shift and go to state 51
 
@@ -474,7 +474,7 @@ state 50
 
 state 51
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT . INT COMMA NAME STRING
+    (10) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT . INT COMMA NAME STRING
 
     INT             shift and go to state 54
 
@@ -495,7 +495,7 @@ state 53
 
 state 54
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT . COMMA NAME STRING
+    (10) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT . COMMA NAME STRING
 
     COMMA           shift and go to state 57
 
@@ -516,7 +516,7 @@ state 56
 
 state 57
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA . NAME STRING
+    (10) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA . NAME STRING
 
     NAME            shift and go to state 59
 
@@ -530,14 +530,14 @@ state 58
 
 state 59
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME . STRING
+    (10) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME . STRING
 
     STRING          shift and go to state 60
 
 
 state 60
 
-    (9) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING .
+    (10) create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING .
 
-    $end            reduce using rule 9 (create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING .)
+    $end            reduce using rule 10 (create_server -> INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING .)
 

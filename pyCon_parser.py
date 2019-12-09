@@ -17,12 +17,11 @@ from ply import yacc
 # that have not yet been implemented.
 # =======================================================================================
 
+
 # Global dictionary to hold all variables created or modified
 global_vars = {}
 connType = None
 currentCon = None
-
-
 
 def p_run_command(p):
     '''
@@ -34,6 +33,7 @@ def p_run_command(p):
                 | create_client
                 | send_message
                 | send_spec_message
+                | create_server_for_all
     '''
     p[0] = p[1]
 
@@ -42,12 +42,11 @@ def p_run_command(p):
 def p_create_server(p):
     '''
     create_server : INITIATE SERVER COLON ADDRESS IP COMMA PORT INT COMMA NAME STRING
-                  | create_server_for_all
     '''
     p[0] = Server(p[5], p[8])
     global_vars[p[11]] = p[0]
     global_vars['conType'] = "s"
-   # print(global_vars)
+# print(global_vars)
 
 def p_create_server_for_all(p):
     '''
@@ -56,7 +55,7 @@ def p_create_server_for_all(p):
     p[0] = Server("", port=p[5])
     global_vars[p[8]] = p[0]
     connType = "s"
-  #  print(global_vars)
+#  print(global_vars)
 
 def p_create_client(p):
     '''
@@ -69,7 +68,7 @@ def p_create_client(p):
     global_vars[username] = p[0]
     global_vars['conType'] = "c"
     global_vars['activeUser'] = username
-  #  print(global_vars)
+#  print(global_vars)
 
 # changes the amount of connections the server will allow
 def p_allow_conns(p):
@@ -154,4 +153,4 @@ while True:
     except EOFError:
         break
     result = parser.parse(msg)
-   # print(result)
+# print(result)

@@ -25,14 +25,7 @@ class Server():
 		process.daemon = True
 		process.start()
 
-#		while True:
-#			msg = input('->')
-#			if msg == 'exit':
-#				self.sock.close()
-#				sys.exit()
-#			else:
-#				pass
-
+	# changes limit of clients connected
 	def changeClientLimit(self, num):
 		if(num >= 2 and num <= 10 and num > len(self.clientList)):
 			print("changed client limit to "+ str(num))
@@ -40,11 +33,13 @@ class Server():
 		else:
 			print("*** got to have at least 2 connections and less than 10. \n Also, must be more than current total of connected clients: ", str(len(self.clientList)))
 
+	# close connection
 	def closeCon(self):
 		print("close server connection")
 		self.sock.close()
 		sys.exit()
 	
+	# looks up specific client
 	def lookUpClient(self, client):
 		for c in self.clientList:
 			try:
@@ -55,6 +50,7 @@ class Server():
 			except:
 				print("server does not have clients connected")
 
+	# gets clients from client list
 	def getClientsList(self):
 		message = ''
 		if(len(self.clientList) == 0):
@@ -64,9 +60,11 @@ class Server():
 				message += c['username'] + ', '
 			return message
 
+	# prints client list
 	def showClientsList(self):
 		print(self.getClientsList())
 
+	# close a specific client connection
 	def closeClientCon(self, client):
 		for c in self.clientList:
 			try:
@@ -75,6 +73,7 @@ class Server():
 			except:
 				print("client is no longer connected")
 
+	# send a message to all clients connected to the server
 	def msg_to_all(self, msg, client):
 		for c in self.clientList:
 			try:
@@ -84,6 +83,7 @@ class Server():
 			except:
 				self.clientList.remove(c)
 	
+	# send a message to a spcific client
 	def msg_to_specific_client(self, msg, client, source):
 		for c in self.clientList:
 			if c['username'] == client:
@@ -102,6 +102,7 @@ class Server():
 				except:
 					print("error sending message to clients")
 
+	# accept connection
 	def acceptCon(self):
 		print("accepting new clients")
 		while True:

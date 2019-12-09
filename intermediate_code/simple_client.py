@@ -21,13 +21,6 @@ class Client():
 			msg_recv.daemon = True
 			msg_recv.start()
 
-#			while True:
-#				msg = input('->')
-#				if msg != 'exit':
-#					self.send_msg(msg)
-#				else:
-#					self.sock.close()
-#					sys.exit()
 		except:
 			if KeyboardInterrupt:
 				print("\n ** connection aborted or not able to establish **")
@@ -65,6 +58,3 @@ class Client():
 			self.sock.send(pickle.dumps(msg))
 		except:
 			print("could not send message or connection expired. Retry connection")
-
-
-#c = Client()
