@@ -10,20 +10,23 @@ class Server():
 		self.clientList = []
 		self.userCount = 0
 
+		self.servHost = host
+		self.servPort = port
+
 		self.userLimit = 4
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.sock.bind((str(host), int(port)))
 		self.sock.listen(10)
 		self.sock.setblocking(False)
 
-		accept = threading.Thread(target=self.acceptCon)
-		process = threading.Thread(target=self.processCon)
+		self.accept = threading.Thread(target=self.acceptCon)
+		self.process = threading.Thread(target=self.processCon)
 		
-		accept.daemon = True
-		accept.start()
+		self.accept.daemon = True
+		self.accept.start()
 
-		process.daemon = True
-		process.start()
+		self.process.daemon = True
+		self.process.start()
 
 	# changes limit of clients connected
 	def changeClientLimit(self, num):
@@ -60,9 +63,20 @@ class Server():
 				message += c['username'] + ', '
 			return message
 
+	# call to provide the server info (address and port)
+	def getServerInfo(self):
+		host = str(self.servHost)
+		if (not host):
+			host = "all"
+		message = "server address: "+ host +", port: "+ str(self.servPort)
+		return message
+
 	# prints client list
 	def showClientsList(self):
 		print(self.getClientsList())
+	
+	def showServerInfo(self):
+		print(self.getServerInfo())
 
 	# close a specific client connection
 	def closeClientCon(self, client):
@@ -73,7 +87,7 @@ class Server():
 			except:
 				print("client is no longer connected")
 
-	# send a message to all clients connected to the server
+	# send a message to all clients connected to the server fom a client
 	def msg_to_all(self, msg, client):
 		for c in self.clientList:
 			try:
@@ -83,24 +97,25 @@ class Server():
 			except:
 				self.clientList.remove(c)
 	
-	# send a message to a spcific client
+	# send a message to a specific client
 	def msg_to_specific_client(self, msg, client, source):
 		for c in self.clientList:
 			if c['username'] == client:
 				new_msg = pickle.dumps(source['username'] + ": "+ msg)
 				c['conn'].send(new_msg)
 
-	
+	# send message to all clients from the server
 	def msg_to_all_from_server(self, msg):
 		if(len(self.clientList) == 0):
 			print("no clients connected")
 		else:
 			for c in self.clientList:
 				try:
-					new_msg = pickle.dumps(msg)
+					new_msg = pickle.dumps( "server: "+ msg)
 					c['conn'].send(new_msg)
 				except:
 					print("error sending message to clients")
+
 
 	# accept connection
 	def acceptCon(self):
@@ -121,6 +136,10 @@ class Server():
 			except:
 				pass
 
+	def sendServerInfo(self, client):
+		message = self.getServerInfo()
+		client['conn'].send(pickle.dumps(message))
+
 	def sendClientList(self, client):
 		message = self.getClientsList()
 		client['conn'].send(pickle.dumps(message))
@@ -138,6 +157,8 @@ class Server():
 						elif(data and message[0] == 'sendSpecMessage'):
 							print(message)
 							self.msg_to_specific_client(message[2],message[1], c)
+						elif(data and message[0] == 'getServInfo'):
+							self.sendServerInfo(c)
 						elif data:
 							print("received : " + pickle.loads(data) )
 							self.msg_to_all(data,c)

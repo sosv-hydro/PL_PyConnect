@@ -34,6 +34,7 @@ def p_run_command(p):
                 | send_message
                 | send_spec_message
                 | create_server_for_all
+                | show_server_info
     '''
     p[0] = p[1]
 
@@ -92,6 +93,16 @@ def p_show_clients(p):
     else:
         print("server is not yet created")
 
+def p_show_server_info(p):
+    '''
+    show_server_info : SHOW STRING INFO
+    '''
+    server = global_vars[p[2]]
+    if(server):
+        server.showServerInfo()
+    else:
+        print("server is not yet created")
+
 def p_close_connection(p):
     '''
     close_connection : CLOSE CONNECTION COLON STRING
@@ -105,19 +116,18 @@ def p_close_connection(p):
     except AttributeError:
         print("object to close is not of a connection type")
     
-# TODO: Verify
+# Close a particular client connection in the server
 def p_close_client_connection_in_server(p):
     '''
     close_client_connection_in_server : CLOSE CONNECTION COLON STRING IN STRING
     '''
     server = global_vars[p[6]]
     if(server):
-        if(server.lookUpClient(p[4])):
-            server.closeClientCon(p[4])
-        else:
-            print("client not in server")
-    else:
-        print("keyword not recognized")
+        try:
+            if(server.lookUpClient(p[4])):
+                server.closeClientCon(p[4])
+        except KeyError:
+            print("client not connected to server")
 
 def p_send_message(p):
     '''
@@ -142,6 +152,14 @@ def p_send_spec_message(p):
     else:
         print("message was not sent")
 
+def p_error(p):
+     if p:
+          print("Syntax error at token", p.type)
+          # Just discard the token and tell the parser it's okay.
+          parser.errok()
+     else:
+          print("Syntax error at EOF")
+
 # Build the parser
 parser = yacc.yacc()
 
@@ -153,4 +171,3 @@ while True:
     except EOFError:
         break
     result = parser.parse(msg)
-# print(result)
