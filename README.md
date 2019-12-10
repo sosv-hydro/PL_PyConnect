@@ -7,5 +7,5 @@
 
 Sofia Saavedra and John Hernandez
 
-for the ICOM 4036- 060 class
+for the ICOM 4036- 066 class
 </body>
