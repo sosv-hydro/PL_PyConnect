@@ -84,6 +84,7 @@ class Server():
 			try:
 				if c['username'] == client:
 					c['conn'].close()
+					sys.exit()
 			except:
 				print("client is no longer connected")
 
